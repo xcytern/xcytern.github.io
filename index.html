@@ -10,10 +10,56 @@
 </head>
 <body>
     <h1>Google Search Results</h1>
-    <form action="scrape.php" method="POST">
-        <input type="text" name="search_query" placeholder="Enter your search query">
-        <button type="submit">Search</button>
-    </form>
+    <input type="text" id="searchQuery" placeholder="Enter your search query">
+    <button type="button" onclick="searchGoogle()">Search</button>
     <div id="searchResults"></div>
+
+    <script>
+        function searchGoogle() {
+            var searchQuery = document.getElementById("searchQuery").value;
+            var googleUrl = "https://www.google.com/search?q=" + encodeURIComponent(searchQuery);
+            fetch(googleUrl)
+                .then(function(response) {
+                    return response.text();
+                })
+                .then(function(data) {
+                    var parser = new DOMParser();
+                    var htmlDoc = parser.parseFromString(data, 'text/html');
+                    var links = htmlDoc.getElementsByTagName('a');
+                    var searchResults = [];
+                    for (var i = 0; i < links.length; i++) {
+                        var href = links[i].getAttribute('href');
+                        if (href.indexOf('/url?q=') === 0) {
+                            var url = decodeURIComponent(href.substr(7).split('&')[0]);
+                            searchResults.push(url);
+                        }
+                    }
+                    displaySearchResults(searchResults);
+                })
+                .catch(function(error) {
+                    console.log('Error:', error);
+                });
+        }
+
+        function displaySearchResults(results) {
+            var searchResultsDiv = document.getElementById("searchResults");
+            searchResultsDiv.innerHTML = "";
+
+            var heading = document.createElement("h2");
+            heading.textContent = "Search Results";
+            searchResultsDiv.appendChild(heading);
+
+            var ol = document.createElement("ol");
+            for (var i = 0; i < results.length; i++) {
+                var li = document.createElement("li");
+                var a = document.createElement("a");
+                a.href = results[i];
+                a.textContent = results[i];
+                li.appendChild(a);
+                ol.appendChild(li);
+            }
+            searchResultsDiv.appendChild(ol);
+        }
+    </script>
 </body>
 </html>
