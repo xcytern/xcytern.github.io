@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Google Search Results</title>
+    <style>
+        ol {
+            list-style-type: decimal;
+        }
+    </style>
+</head>
+<body>
+    <h1>Google Search Results</h1>
+    <form action="scrape.php" method="POST">
+        <input type="text" name="search_query" placeholder="Enter your search query">
+        <button type="submit">Search</button>
+    </form>
+    <div id="searchResults"></div>
+</body>
+</html>
